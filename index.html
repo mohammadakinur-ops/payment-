@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Free Payment Gateway</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+<h1>💳 Payment Gateway</h1>
+<p class="muted">Demo / Test Payment System</p>
+<div class="card">
+<label>Customer Name</label><input id="customer" placeholder="আপনার নাম">
+<label>Payment Method</label>
+<select id="method"><option>bKash</option><option>Nagad</option><option>Bank</option></select>
+<label>Amount</label><input id="amount" type="number" min="1" placeholder="100">
+<label>Transaction ID</label><input id="trx" placeholder="TRX123456">
+<button onclick="pay()">Submit Payment</button>
+<div id="msg"></div>
+</div>
+<a class="admin" href="/admin.html">⚙️ Admin Panel</a>
+</div>
+<script>
+async function pay(){
+ const body={customer:customer.value,method:method.value,amount:amount.value,trx_id:trx.value};
+ const r=await fetch("/api/payments",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+ const d=await r.json();
+ msg.innerHTML=d.success?`<div class="ok">Payment submitted. ID: #${d.id}</div>`:`<div class="err">${d.error}</div>`;
+}
+</script>
+</body></html>

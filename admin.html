@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="bn">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Panel</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<div class="wrap"><h1>⚙️ Admin Panel</h1>
+<div class="card"><button onclick="load()">Refresh</button><div id="table"></div></div>
+</div>
+<script>
+async function load(){
+ const rows=await (await fetch("/api/payments")).json();
+ table.innerHTML=`<table><tr><th>ID</th><th>Customer</th><th>Method</th><th>Amount</th><th>TRX</th><th>Status</th><th>Action</th></tr>`+
+ rows.map(x=>`<tr><td>#${x.id}</td><td>${esc(x.customer)}</td><td>${x.method}</td><td>${x.amount}</td><td>${esc(x.trx_id)}</td><td>${x.status}</td><td>
+ <button onclick="setStatus(${x.id},'SUCCESS')">Success</button>
+ <button onclick="setStatus(${x.id},'FAILED')">Failed</button></td></tr>`).join("")+"</table>";
+}
+async function setStatus(id,status){
+ await fetch("/api/payments/"+id,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({status})});
+ load();
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+load();
+</script></body></html>
